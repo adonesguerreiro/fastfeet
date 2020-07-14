@@ -33,7 +33,7 @@ class OrderController {
     }
 
     const recipientExists = await Recipient.findByPk(req.body.recipient_id, {
-      attributes: ['name', 'street'],
+      attributes: ['name', 'street', 'number', 'state', 'city', 'zipcode'],
       where: {
         id: req.body.recipient_id,
       },
