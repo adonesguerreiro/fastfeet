@@ -59,10 +59,23 @@ class OrderController {
 
     const order = await Order.create(req.body);
 
+    const ordersExists = await Order.findByPk(order.id, {
+      attributes: ['product'],
+      where: {
+        id: order.id,
+      },
+    });
+
     await Mail.sendMail({
       to: `${deliverymanExists.name} <${deliverymanExists.email}>`,
       subject: 'Nova entrega',
-      html: 'Olá, você possui uma nova encomenda a ser entregue',
+      template: 'order',
+      context: {
+        deliveryman: deliverymanExists.name,
+        recipient: recipientExists.name,
+        address: recipientExists.street,
+        product: ordersExists.product,
+      },
     });
 
     return res.json(order);
