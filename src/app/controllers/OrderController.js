@@ -5,6 +5,7 @@ import Recipient from '../models/Recipient';
 import Mail from '../../lib/Mail';
 
 class OrderController {
+
   async index(req, res) {
     const orders = await Order.findAll({
       attributes: [
@@ -32,12 +33,8 @@ class OrderController {
       return res.status(401).json({ error: 'Validations fails' });
     }
 
-    const recipientExists = await Recipient.findByPk(req.body.recipient_id, {
-      attributes: ['name', 'street', 'number', 'state', 'city', 'zipcode'],
-      where: {
-        id: req.body.recipient_id,
-      },
-    });
+    const recipientExists = await Recipient.findByPk(req.body.recipient_id
+    );
 
     if (!recipientExists) {
       return res.status(400).json({ error: 'Recipient does not exists' });
@@ -45,12 +42,6 @@ class OrderController {
 
     const deliverymanExists = await Deliveryman.findByPk(
       req.body.deliveryman_id,
-      {
-        attributes: ['name', 'email'],
-        where: {
-          id: req.body.deliveryman_id,
-        },
-      }
     );
 
     if (!deliverymanExists) {
@@ -59,23 +50,34 @@ class OrderController {
 
     const order = await Order.create(req.body);
 
-    const ordersExists = await Order.findByPk(order.id, {
-      attributes: ['product'],
-      where: {
-        id: order.id,
-      },
+    const ordersCreate = await Order.findByPk(order.id, {
+        include: [
+            {
+                model: Deliveryman,
+                as:'deliverymans',
+                attributes: ['name', 'email'],
+                where: {
+                    id: req.body.deliveryman_id,
+                },
+
+            },
+
+            {
+                model: Recipient,
+                as: 'recipients',
+                attributes: ['name','street'],
+                where: {
+                    id: req.body.recipient_id,
+                },
+            }
+
+        ]
     });
 
     await Mail.sendMail({
-      to: `${deliverymanExists.name} <${deliverymanExists.email}>`,
+      to: `${ordersCreate.product} <${ordersCreate.recipients.street}>`,
       subject: 'Nova entrega',
-      template: 'order',
-      context: {
-        deliveryman: deliverymanExists.name,
-        recipient: recipientExists.name,
-        address: recipientExists.street,
-        product: ordersExists.product,
-      },
+      html: 'Enviou',
     });
 
     return res.json(order);

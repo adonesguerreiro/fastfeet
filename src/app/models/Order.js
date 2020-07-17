@@ -1,5 +1,6 @@
 import Sequelize, { Model } from 'sequelize';
 import Deliveryman from './Deliveryman';
+import Recipient from './Recipient';
 
 class Order extends Model {
   static init(sequelize) {
@@ -17,21 +18,15 @@ class Order extends Model {
       }
     );
 
-    Order.belongsTo(Deliveryman);
+    Order.belongsTo(Deliveryman, {as: 'deliverymans', foreignKey: 'deliveryman_id'});
     Deliveryman.hasMany(Order);
+    Order.belongsTo(Recipient, {as: 'recipients', foreignKey: 'recipient_id'}),
+    Recipient.hasMany(Order);
 
     return this;
   }
 
   static associations(models) {
-    this.belongsTo(models.Deliveryman, {
-      foreignKey: 'deliveryman_id',
-      as: 'deliverymans',
-    });
-    this.belongsTo(models.Recipient, {
-      foreignKey: 'recipient_id',
-      as: 'recipients',
-    });
     this.belongsTo(models.File, {
       foreignKey: 'signature_id',
       as: 'signature',
