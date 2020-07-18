@@ -18,9 +18,17 @@ class Order extends Model {
       }
     );
 
-    Order.belongsTo(Deliveryman, {as: 'deliverymans', foreignKey: 'deliveryman_id'});
+    Order.belongsTo(Deliveryman, {
+      as: 'deliverymans',
+      foreignKey: 'deliveryman_id',
+    });
     Deliveryman.hasMany(Order);
-    Order.belongsTo(Recipient, {as: 'recipients', foreignKey: 'recipient_id'}),
+
+    Order.belongsTo(Recipient, {
+      as: 'recipients',
+      foreignKey: 'recipient_id',
+    });
+
     Recipient.hasMany(Order);
 
     return this;
@@ -28,7 +36,6 @@ class Order extends Model {
 
   static associations(models) {
     this.belongsTo(models.File, {
-      foreignKey: 'signature_id',
       as: 'signature',
     });
   }
