@@ -2,7 +2,8 @@ import * as Yup from 'yup';
 import Order from '../models/Order';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
-import Mail from '../../lib/Mail';
+import Queue from '../../lib/Queue';
+import PackageDelivery from '../jobs/PackageDelivery';
 
 class OrderController {
   async index(req, res) {
@@ -70,17 +71,8 @@ class OrderController {
       ],
     });
 
-    await Mail.sendMail({
-      to: `${dataOrder.deliverymans.name} <${dataOrder.deliverymans.email}>`,
-      subject: 'Nova entrega',
-      template: 'order',
-      context: {
-        deliveryman: dataOrder.deliverymans.name,
-        recipient: dataOrder.recipients.name,
-        address: `${dataOrder.recipients.street}, ${dataOrder.recipients.number},
-        ${dataOrder.recipients.state} - ${dataOrder.recipients.city},${dataOrder.recipients.zipcode}.`,
-        product: dataOrder.product,
-      },
+    await Queue.add(PackageDelivery.key, {
+      dataOrder,
     });
 
     return res.json(order);
