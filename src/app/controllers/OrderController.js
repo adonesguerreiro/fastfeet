@@ -22,6 +22,23 @@ class OrderController {
     return res.json(orders);
   }
 
+  async indexdeliveryman(req, res) {
+    const orderDeliveryman = await Order.findByPk(req.params.id, {
+      attributes: ['id', 'product'],
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliverymans',
+          attributes: ['id', 'name'],
+          where: {
+            id: req.params.id,
+          },
+        },
+      ],
+    });
+    return res.json(orderDeliveryman);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       recipient_id: Yup.number().required(),
