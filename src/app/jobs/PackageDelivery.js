@@ -14,11 +14,11 @@ class PackageDelivery {
       context: {
         deliveryman: dataOrder.deliverymans.name,
         recipient: dataOrder.recipients.name,
-        address: `${dataOrder.recipients.street}
-          ${dataOrder.recipients.number}
-          ${dataOrder.recipients.state}
-          ${dataOrder.recipients.city}
-          ${dataOrder.recipients.zipcode}`,
+        address: `${dataOrder.recipients.street} ,
+          ${dataOrder.recipients.number} ,
+          ${dataOrder.recipients.state} ,
+          ${dataOrder.recipients.city},
+         ${dataOrder.recipients.zipcode}`,
         product: dataOrder.product,
       },
     });

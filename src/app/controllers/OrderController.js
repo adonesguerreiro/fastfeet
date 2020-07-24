@@ -8,22 +8,14 @@ import PackageDelivery from '../jobs/PackageDelivery';
 class OrderController {
   async index(req, res) {
     const orders = await Order.findAll({
-      attributes: [
-        'id',
-        'recipient_id',
-        'deliveryman_id',
-        'product',
-        'canceled_at',
-        'start_date',
-        'end_date',
-      ],
+      attributes: ['id', 'recipient_id', 'deliveryman_id', 'product'],
     });
 
     return res.json(orders);
   }
 
   async indexdeliveryman(req, res) {
-    const orderDeliveryman = await Order.findByPk(req.params.id, {
+    const orderDeliveryman = await Order.findAll({
       attributes: ['id', 'product'],
       include: [
         {
@@ -64,9 +56,9 @@ class OrderController {
       return res.status(400).json({ error: 'Delivery does not exists' });
     }
 
-    const order = await Order.create(req.body);
+    const { id, product, deliveryman_id } = await Order.create(req.body);
 
-    const dataOrder = await Order.findByPk(order.id, {
+    const dataOrder = await Order.findByPk(id, {
       include: [
         {
           model: Deliveryman,
@@ -92,7 +84,7 @@ class OrderController {
       dataOrder,
     });
 
-    return res.json(order);
+    return res.json({ id, product, deliveryman_id });
   }
 }
 
