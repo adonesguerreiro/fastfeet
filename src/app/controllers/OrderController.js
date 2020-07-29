@@ -17,6 +17,10 @@ class OrderController {
   async indexdeliveryman(req, res) {
     const orderDeliveryman = await Order.findAll({
       attributes: ['id', 'product'],
+      where: {
+        end_date: null,
+        canceled_at: null,
+      },
       include: [
         {
           model: Deliveryman,
@@ -85,6 +89,41 @@ class OrderController {
     });
 
     return res.json({ id, product, deliveryman_id });
+  }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      deliveryman_id: Yup.number().required(),
+      id: Yup.number().required(),
+      start_date: Yup.date().required(),
+      end_date: Yup.date(),
+    });
+
+    if (await schema.isValid(req.body)) {
+      return res.status(401).json({ error: 'Validations fails' });
+    }
+
+    const orderExists = await Order.findByPk(req.body.order_id, {
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliverymans',
+          where: {
+            id: req.body.deliveryman_id,
+          },
+        },
+      ],
+    });
+
+    if (!orderExists) {
+      return res.status(400).json({ error: 'This order does not exists' });
+    }
+
+    const { deliveryman_id, id, start_date, end_date } = await Order.update(
+      req.body
+    );
+
+    return res.json({ deliveryman_id, id, start_date, end_date });
   }
 }
 
