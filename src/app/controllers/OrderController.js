@@ -116,12 +116,17 @@ class OrderController {
     });
 
     if (!orderExists) {
-      return res.status(400).json({ error: 'This order does not exists' });
+      return res
+        .status(400)
+        .json({ error: 'This order or deliveryman does not exists' });
     }
 
-    const { deliveryman_id, id, start_date, end_date } = await Order.update(
-      req.body
-    );
+    const {
+      deliveryman_id,
+      id,
+      start_date,
+      end_date,
+    } = await orderExists.update(req.body);
 
     return res.json({ deliveryman_id, id, start_date, end_date });
   }
