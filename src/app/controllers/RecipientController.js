@@ -66,7 +66,7 @@ class RecipientController {
     }
     const { name } = req.body;
 
-    const recipient = await Recipient.findByPk(req.body.user_id);
+    const recipient = await Recipient.findByPk(req.body.id);
 
     const {
       id,

@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { format, parseISO, isWithinInterval } from 'date-fns';
 import Order from '../models/Order';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
@@ -95,7 +96,7 @@ class OrderController {
     const schema = Yup.object().shape({
       deliveryman_id: Yup.number().required(),
       id: Yup.number().required(),
-      start_date: Yup.date().required(),
+      start_date: Yup.date(),
       end_date: Yup.date(),
     });
 
@@ -121,17 +122,16 @@ class OrderController {
         .json({ error: 'This order or deliveryman does not exists' });
     }
 
-    const countOrders = await Order.findAndCountAll({
-      where: {
-        start_date: !null,
-        limit: 5,
-      },
-    });
+    if (req.body.start_date) {
+      const date = format(new Date(), 'yyyy-MM-dd');
+      const startTime = parseISO(`${date}T08:00`);
+      const finalTime = parseISO(`${date}T18:00`);
 
-    if (!countOrders) {
-      return res
-        .status(400)
-        .json({ error: 'You already made more than five withdrawals a day' });
+      if (!isWithinInterval(new Date(), { start: startTime, end: finalTime })) {
+        return res.status(400).json({
+          error: 'You cannot pick up your order before 8 am and after 6 pm',
+        });
+      }
     }
 
     const {
