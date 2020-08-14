@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { format, parseISO, isWithinInterval } from 'date-fns';
+import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
@@ -123,14 +124,44 @@ class OrderController {
     }
 
     if (req.body.start_date) {
-      const date = format(new Date(), 'yyyy-MM-dd');
+      const datefull = new Date();
+
+      const date = format(datefull, 'yyyy-MM-dd');
       const startTime = parseISO(`${date}T08:00`);
       const finalTime = parseISO(`${date}T18:00`);
 
-      if (!isWithinInterval(new Date(), { start: startTime, end: finalTime })) {
+      const limitOrder = await Order.count({
+        where: {
+          start_date: {
+            [Op.ne]: null,
+          },
+        },
+        include: [
+          {
+            model: Deliveryman,
+            as: 'deliverymans',
+            where: {
+              id: req.body.deliveryman_id,
+            },
+          },
+        ],
+      });
+
+      if (
+        !isWithinInterval(parseISO('2020-08-12T14:33:00-00:00'), {
+          start: startTime,
+          end: finalTime,
+        })
+      ) {
         return res.status(400).json({
           error: 'You cannot pick up your order before 8 am and after 6 pm',
         });
+      }
+      // eslint-disable-next-line no-else-return
+      else if (limitOrder >= 5) {
+        return res
+          .status(400)
+          .json({ error: 'You cannot withdraw more than five orders per day' });
       }
     }
 

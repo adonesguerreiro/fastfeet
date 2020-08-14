@@ -19,7 +19,7 @@ module.exports = {
       "no-params-reassign": "off",
       "camelcase": "off",
       "no-unused-vars": ["error", {"argsIgnorePattern": "next"}],
-      "no-param-reassign": [2, { "props": false }]
+      "no-param-reassign": [2, { "props": false }],
 
     },
   };
