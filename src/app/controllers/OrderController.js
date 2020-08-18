@@ -130,10 +130,11 @@ class OrderController {
       const startTime = parseISO(`${date}T08:00`);
       const finalTime = parseISO(`${date}T18:00`);
 
-      const limitOrder = await Order.count({
+      const limitOrder = await Order.findAndCountAll({
         where: {
           start_date: {
-            [Op.ne]: null,
+            [Op.gte]: req.body.start_date,
+            [Op.lte]: req.body_start_date,
           },
         },
         include: [
@@ -148,7 +149,7 @@ class OrderController {
       });
 
       if (
-        !isWithinInterval(parseISO('2020-08-12T14:33:00-00:00'), {
+        !isWithinInterval(parseISO('2020-08-17T14:33:00-00:00'), {
           start: startTime,
           end: finalTime,
         })
@@ -157,14 +158,15 @@ class OrderController {
           error: 'You cannot pick up your order before 8 am and after 6 pm',
         });
       }
-      // eslint-disable-next-line no-else-return
-      else if (limitOrder >= 5) {
-        return res
-          .status(400)
-          .json({ error: 'You cannot withdraw more than five orders per day' });
+      const initialDate = req.body.start_date.slice(0, 10);
+
+      if (date !== initialDate) {
+        return res.status(400).json({
+          error:
+            'You are informed of a withdrawal date different from the current date',
+        });
       }
     }
-
     const {
       deliveryman_id,
       id,
