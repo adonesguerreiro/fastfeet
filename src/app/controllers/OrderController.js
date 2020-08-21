@@ -130,12 +130,12 @@ class OrderController {
       const startTime = parseISO(`${date}T08:00`);
       const finalTime = parseISO(`${date}T18:00`);
 
-      const limitOrder = await Order.findAndCountAll({
+      const limitOrder = await Order.count({
         where: {
           start_date: {
-            [Op.gte]: req.body.start_date,
-            [Op.lte]: req.body_start_date,
+            [Op.between]: [startTime, finalTime],
           },
+          end_date: null,
         },
         include: [
           {
@@ -149,7 +149,7 @@ class OrderController {
       });
 
       if (
-        !isWithinInterval(parseISO('2020-08-17T14:33:00-00:00'), {
+        !isWithinInterval(parseISO('2020-08-19T14:33:00-00:00'), {
           start: startTime,
           end: finalTime,
         })
@@ -164,6 +164,11 @@ class OrderController {
         return res.status(400).json({
           error:
             'You are informed of a withdrawal date different from the current date',
+        });
+      }
+      if (limitOrder === 5) {
+        return res.status(400).json({
+          error: 'You already reached your daily order withdrawal limit',
         });
       }
     }
