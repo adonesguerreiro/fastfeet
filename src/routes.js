@@ -13,20 +13,24 @@ import OrderController from './app/controllers/OrderController';
 const routes = new Router();
 const upload = multer(multerConfig);
 // routes.post('/users', UserController.store);
-
+routes.post('/sessions', SessionController.store);
+routes.get('/deliveryman/:id/deliveries', OrderController.show);
+routes.post('/files', upload.single('file'), FileController.store);
+// Rotas para administradores autenticados na aplicação
 routes.use(authMiddleware);
+// Routes from recipients
 routes.post('/recipients', RecipientController.store);
 routes.put('/recipients', RecipientController.update);
-routes.post('/sessions', SessionController.store);
-routes.post('/files', upload.single('file'), FileController.store);
+// Routes from deliverymans
 routes.post('/deliveryman', DeliverymanController.store);
 routes.get('/deliveryman', DeliverymanController.index);
 routes.put('/deliveryman', DeliverymanController.update);
 routes.delete('/deliveryman/:id', DeliverymanController.delete);
+// Routes from orders
 routes.post('/order', OrderController.store);
 routes.put('/order', OrderController.update);
 routes.get('/order', OrderController.index);
-routes.get('/deliveryman/:id/deliveries', OrderController.indexdeliveryman);
+
 // routes.put('/users', UserController.update);
 
 export default routes;

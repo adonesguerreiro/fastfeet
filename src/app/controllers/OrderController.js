@@ -14,7 +14,7 @@ class OrderController {
     return res.json(orders);
   }
 
-  async indexdeliveryman(req, res) {
+  async show(req, res) {
     const orderDeliveryman = await Order.findAll({
       attributes: ['id', 'product'],
       where: {
@@ -119,6 +119,19 @@ class OrderController {
       return res
         .status(400)
         .json({ error: 'This order or deliveryman does not exists' });
+    }
+
+    const countOrders = await Order.findAndCountAll({
+      where: {
+        start_date: !null,
+        limit: 5,
+      },
+    });
+
+    if (!countOrders) {
+      return res
+        .status(400)
+        .json({ error: 'You already made more than five withdrawals a day' });
     }
 
     const {
