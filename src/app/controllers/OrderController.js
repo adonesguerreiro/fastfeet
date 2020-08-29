@@ -135,7 +135,6 @@ class OrderController {
           start_date: {
             [Op.between]: [startTime, finalTime],
           },
-          end_date: null,
         },
         include: [
           {
@@ -172,6 +171,7 @@ class OrderController {
         });
       }
     }
+
     const {
       deliveryman_id,
       id,
