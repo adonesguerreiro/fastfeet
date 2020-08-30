@@ -12,6 +12,12 @@ class Order extends Model {
         canceled_at: Sequelize.DATE,
         start_date: Sequelize.DATE,
         end_date: Sequelize.DATE,
+        url: {
+          type: Sequelize.VIRTUAL,
+          get() {
+            return `http://localhost:2000/order/${this.path}`;
+          },
+        },
       },
       {
         sequelize,
