@@ -1,7 +1,8 @@
 module.exports = {
     env: {
       es6: true,
-      node:true
+      node:true,
+
     },
     extends: ['airbnb-base', 'prettier'],
     plugins: ['prettier'],
@@ -20,6 +21,7 @@ module.exports = {
       "camelcase": "off",
       "no-unused-vars": ["error", {"argsIgnorePattern": "next"}],
       "no-param-reassign": [2, { "props": false }],
+      "import/prefer-default-export": "off"
 
     },
   };
