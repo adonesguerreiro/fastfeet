@@ -8,7 +8,6 @@ class FileController {
       name,
       path,
     });
-    console.log(file);
     return res.json(file);
   }
 }

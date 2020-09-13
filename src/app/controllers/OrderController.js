@@ -99,6 +99,7 @@ class OrderController {
       id: Yup.number().required(),
       start_date: Yup.date(),
       end_date: Yup.date(),
+      signature_id: Yup.number(),
     });
 
     if (await schema.isValid(req.body)) {
@@ -125,7 +126,6 @@ class OrderController {
 
     if (req.body.start_date) {
       const datefull = new Date();
-
       const date = format(datefull, 'yyyy-MM-dd');
       const startTime = parseISO(`${date}T08:00`);
       const finalTime = parseISO(`${date}T18:00`);
@@ -148,7 +148,7 @@ class OrderController {
       });
 
       if (
-        !isWithinInterval(parseISO('2020-08-19T14:33:00-00:00'), {
+        !isWithinInterval(parseISO('2020-09-13T14:33:00-00:00'), {
           start: startTime,
           end: finalTime,
         })
@@ -172,14 +172,31 @@ class OrderController {
       }
     }
 
+    if (req.body.end_date && req.body.signature_id) {
+      const startDateExists = await Order.findByPk(req.body.order_id, {
+        where: {
+          start_date: {
+            [Op.not]: null,
+          },
+        },
+      });
+
+      if (!startDateExists) {
+        return res
+          .status(401)
+          .json({ error: 'The start date field is not informed.' });
+      }
+    }
+
     const {
       deliveryman_id,
       id,
       start_date,
       end_date,
+      signature_id,
     } = await orderExists.update(req.body);
 
-    return res.json({ deliveryman_id, id, start_date, end_date });
+    return res.json({ deliveryman_id, id, start_date, end_date, signature_id });
   }
 }
 

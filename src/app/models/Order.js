@@ -1,6 +1,7 @@
 import Sequelize, { Model } from 'sequelize';
 import Deliveryman from './Deliveryman';
 import Recipient from './Recipient';
+import File from './File';
 
 class Order extends Model {
   static init(sequelize) {
@@ -12,18 +13,17 @@ class Order extends Model {
         canceled_at: Sequelize.DATE,
         start_date: Sequelize.DATE,
         end_date: Sequelize.DATE,
-        url: {
-          type: Sequelize.VIRTUAL,
-          get() {
-            return `http://localhost:2000/order/${this.path}`;
-          },
-        },
+        signature_id: Sequelize.INTEGER,
       },
       {
         sequelize,
       }
     );
 
+    Order.belongsTo(File, {
+      as: 'signatures',
+      foreignKey: 'signature_id',
+    });
     Order.belongsTo(Deliveryman, {
       as: 'deliverymans',
       foreignKey: 'deliveryman_id',
@@ -38,12 +38,6 @@ class Order extends Model {
     Recipient.hasMany(Order);
 
     return this;
-  }
-
-  static associations(models) {
-    this.belongsTo(models.File, {
-      as: 'signature',
-    });
   }
 }
 export default Order;
