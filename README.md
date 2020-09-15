@@ -1,4 +1,4 @@
-<h1>Fastfeet<h1>
+<h1>Fastfeet</h1>
 
 <p>O objetivo é desenvolver uma aplicação de entrega de encomendas, onde é feito a inserção
 de informações de entregador, destinatário e pedido gerenciado por um usuário administrador, onde cada encomenda é atribuída a um entregador, com data de retirada e data de entrega ao destinatário</p>
