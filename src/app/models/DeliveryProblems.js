@@ -17,6 +17,7 @@ class DeliveryProblems extends Model {
       as: 'problems',
       foreignKey: 'order_id',
     });
+    Order.hasOne(DeliveryProblems);
     return this;
   }
 }

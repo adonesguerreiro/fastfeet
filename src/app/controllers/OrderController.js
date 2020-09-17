@@ -148,7 +148,7 @@ class OrderController {
       });
 
       if (
-        !isWithinInterval(parseISO('2020-09-13T14:33:00-00:00'), {
+        !isWithinInterval(parseISO('2020-09-14T14:33:00-00:00'), {
           start: startTime,
           end: finalTime,
         })
