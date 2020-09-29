@@ -9,7 +9,7 @@ import authMiddleware from './app/middlewares/auth';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import FileController from './app/controllers/FileController';
 import OrderController from './app/controllers/OrderController';
-import DeliveryProblemsController from './app/controllers/DeliveryProblemsController';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -19,9 +19,10 @@ routes.get('/deliveryman/:id/deliveries', OrderController.show);
 routes.post('/files', upload.single('file'), FileController.store);
 
 // Routes from problems
-routes.get('/deliveryproblems', DeliveryProblemsController.allProblems);
-routes.get('/delivery/problems/:id', DeliveryProblemsController.problemsOrder);
-routes.post('/delivery/problems/:id', DeliveryProblemsController.store);
+routes.post('/delivery/problems/add/:id', DeliveryProblemController.store);
+routes.put('delivery/problems/update/:id', DeliveryProblemController.update);
+routes.get('/delivery/problems', DeliveryProblemController.allProblems);
+routes.get('/delivery/problems/:id', DeliveryProblemController.problemsOrder);
 
 // Rotas para administradores autenticados na aplicação
 routes.use(authMiddleware);
