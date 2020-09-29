@@ -24,10 +24,12 @@ class Order extends Model {
       as: 'signatures',
       foreignKey: 'signature_id',
     });
+
     Order.belongsTo(Deliveryman, {
       as: 'deliverymans',
       foreignKey: 'deliveryman_id',
     });
+
     Deliveryman.hasMany(Order);
 
     Order.belongsTo(Recipient, {

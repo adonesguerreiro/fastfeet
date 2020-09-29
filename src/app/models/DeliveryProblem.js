@@ -1,7 +1,7 @@
 import Sequelize, { Model } from 'sequelize';
 import Order from './Order';
 
-class DeliveryProblems extends Model {
+class DeliveryProblem extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -13,12 +13,12 @@ class DeliveryProblems extends Model {
       }
     );
 
-    DeliveryProblems.belongsTo(Order, {
-      as: 'problems',
-      foreignKey: 'order_id',
+    DeliveryProblem.belongsTo(Order, {
+      as: 'deliveryproblems',
+      foreignKey: 'delivery_id',
     });
-    Order.hasOne(DeliveryProblems);
+
     return this;
   }
 }
-export default DeliveryProblems;
+export default DeliveryProblem;
